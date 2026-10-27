@@ -38,6 +38,7 @@ exec "$HERE/../lib/music-rpc/music-rpc" "$@"
 EOF
 chmod 755 AppDir/usr/bin/music-rpc
 install -m 644 share/applications/music-rpc-linux.desktop AppDir/usr/share/applications/music-rpc-linux.desktop
+install -m 644 share/applications/music-rpc-linux.desktop AppDir/music-rpc-linux.desktop
 install -m 644 assets/music-rpc.svg AppDir/usr/share/icons/hicolor/scalable/apps/music-rpc-linux.svg
 install -m 644 LICENSE AppDir/usr/share/licenses/music-rpc-linux/LICENSE
 install -m 644 THIRD-PARTY-NOTICES.md AppDir/usr/share/licenses/music-rpc-linux/THIRD-PARTY-NOTICES.md
