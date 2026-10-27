@@ -1,0 +1,63 @@
+name: Linux release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install AppImage tooling
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.local/bin"
+          curl -fsSL https://github.com/AppImage/appimagetool/releases/download/1.9.1/appimagetool-x86_64.AppImage -o "$RUNNER_TEMP/appimagetool.AppImage"
+          echo 'ed4ce84f0d9caff66f50bcca6ff6f35aae54ce8135408b3fa33abfc3cb384eb0  '"$RUNNER_TEMP/appimagetool.AppImage" | sha256sum --check
+          chmod +x "$RUNNER_TEMP/appimagetool.AppImage"
+          cat > "$HOME/.local/bin/appimagetool" <<'EOF'
+          #!/usr/bin/env bash
+          exec "$RUNNER_TEMP/appimagetool.AppImage" --appimage-extract-and-run "$@"
+          EOF
+          chmod +x "$HOME/.local/bin/appimagetool"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Run automated tests
+        run: |
+          python -m pip install -r requirements-linux.txt
+          python -m unittest discover -s tests -v
+
+      - name: Build AppImage
+        run: bash scripts/build-linux.sh
+
+      - name: Verify AppImage and create checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          artifact="dist/Music-RPC-Linux-$(cat VERSION)-x86_64.AppImage"
+          test -s "$artifact"
+          chmod +x "$artifact"
+          sha256sum "$artifact" > "$artifact.sha256"
+
+      - name: Publish GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            dist/Music-RPC-Linux-*.AppImage
+            dist/Music-RPC-Linux-*.AppImage.sha256
