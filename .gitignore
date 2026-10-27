@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+build/
+dist/
+*.AppImage
+*.rpm
+*.deb
+*.tar.gz
+.pytest_cache/

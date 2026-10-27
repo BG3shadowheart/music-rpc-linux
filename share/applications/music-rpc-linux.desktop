@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Music RPC
+Comment=Show your music in Discord Rich Presence
+Exec=music-rpc
+Icon=music-rpc-linux
+Terminal=false
+Categories=AudioVideo;Audio;Utility;
+StartupNotify=false

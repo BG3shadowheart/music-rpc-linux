@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Music RPC for Linux — YouTube Music bridge",
+  "version": "1.0.0",
+  "description": "Send YouTube Music playback details to the local Music RPC app.",
+  "permissions": ["nativeMessaging", "tabs"],
+  "host_permissions": ["https://music.youtube.com/*"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [{
+    "matches": ["https://music.youtube.com/*"],
+    "js": ["content.js"],
+    "run_at": "document_idle"
+  }]
+}
